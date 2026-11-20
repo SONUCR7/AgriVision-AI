@@ -1,0 +1,56 @@
+{
+  "Tomato___Early_blight": {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "pathogen_type": "Fungal (Alternaria solani)",
+    "symptoms": "Dark brown to black spots with concentric rings forming a 'target board' pattern on older foliage, followed by chlorosis.",
+    "chemical_treatment": "Apply Mancozeb 75% WP @ 2.5 g/L or Chlorothalonil @ 2 g/L at the first appearance of symptoms. Repeat at 10-14 day intervals.",
+    "organic_treatment": "Spray Neem oil (5ml/L) with soap solution, or apply Copper Hydroxide / Trichoderma viride bio-fungicide (5g/L).",
+    "preventative_measures": "Practice crop rotation with non-solanaceous crops, maintain drip irrigation to keep foliage dry, and prune lower leaves."
+  },
+  "Tomato___Late_blight": {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "pathogen_type": "Oomycete (Phytophthora infestans)",
+    "symptoms": "Irregular water-soaked greasy lesions turning dark brown to purplish with pale borders and white fuzzy sporulation on underside.",
+    "chemical_treatment": "Foliar spray with Metalaxyl + Mancozeb (Ridomil MZ) @ 2 g/L or Cymoxanil + Mancozeb @ 2 g/L.",
+    "organic_treatment": "Bordeaux mixture (1%) spray or copper oxychloride 50% WP @ 3 g/L.",
+    "preventative_measures": "Avoid overhead watering; remove and destroy infected vines immediately; ensure adequate field drainage."
+  },
+  "Potato___Late_blight": {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "pathogen_type": "Oomycete (Phytophthora infestans)",
+    "symptoms": "Dark lesion margins on leaf tips and margins; rapid wilting and necrosis during cool, humid weather.",
+    "chemical_treatment": "Spray Dimethomorph 50% WP @ 1 g/L or Fenamidone + Mancozeb @ 2.5 g/L.",
+    "organic_treatment": "Preventative spraying of fermented cow urine extract or copper sulfate lime wash.",
+    "preventative_measures": "Use certified disease-free seed tubers, hill up soil well to protect tubers, and de-haulm before harvest."
+  },
+  "Corn___Common_rust": {
+    "crop": "Corn (Maize)",
+    "disease": "Common Rust",
+    "pathogen_type": "Fungal (Puccinia sorghi)",
+    "symptoms": "Golden brown to cinnamon-brown powdery pustules on both upper and lower leaf surfaces.",
+    "chemical_treatment": "Spray Azoxystrobin 18.2% + Difenoconazole 11.4% SC @ 1 ml/L or Propiconazole 25% EC @ 1 ml/L.",
+    "organic_treatment": "Sulphur 80% WP dusting @ 2-3 g/L of water.",
+    "preventative_measures": "Plant resistant hybrids; plant early in the season to evade maximum spore dispersal periods."
+  },
+  "Rice___Bacterial_blight": {
+    "crop": "Rice",
+    "disease": "Bacterial Blight",
+    "pathogen_type": "Bacterial (Xanthomonas oryzae pv. oryzae)",
+    "symptoms": "Water-soaked to yellowish stripes along leaf margins with wavy edges; milky bacterial ooze under humid conditions.",
+    "chemical_treatment": "Spray Streptocycline @ 0.1 g/L mixed with Copper Oxychloride @ 1.5 g/L.",
+    "organic_treatment": "Spray fresh cow dung water extract (20%) or Pseudomonas fluorescens @ 10 g/L.",
+    "preventative_measures": "Avoid excess nitrogen fertilization; maintain proper water drainage in paddy fields; use tolerant cultivars."
+  },
+  "Healthy_Plant": {
+    "crop": "All",
+    "disease": "None (Healthy)",
+    "pathogen_type": "None",
+    "symptoms": "Vigorous green foliage with no visible chlorotic lesions, necrotic spots, or fungal mycelia.",
+    "chemical_treatment": "No chemical treatment required.",
+    "organic_treatment": "Maintain balanced organic manure, vermicompost, and regular microbial bio-fertilizers.",
+    "preventative_measures": "Regular monitoring and balanced N-P-K nutrient management."
+  }
+}
