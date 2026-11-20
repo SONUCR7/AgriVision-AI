@@ -127,10 +127,6 @@
         <span class="text-base">🧪</span> <span>Dosage & Spray Calculator</span>
       </button>
 
-      <button onclick="switchView('research')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition">
-        <span class="text-base">📊</span> <span>Architecture & Benchmarks</span>
-      </button>
-
 
     </div>
 
@@ -337,7 +333,7 @@
                 <h3 class="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <span>🌱</span> Agronomic Treatment Prescriptions
                 </h3>
-                <span class="text-[10px] text-emerald-400 font-bold">TD-PCL Intersection</span>
+                <span class="text-[10px] text-emerald-400 font-bold">Field Actionable Protocol</span>
               </div>
 
               <div class="flex bg-gray-950 rounded-lg p-1 text-[11px] font-bold gap-1 border border-gray-800">
@@ -408,7 +404,7 @@
             <div class="flex gap-3">
               <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold flex-shrink-0">AI</div>
               <div class="bg-gray-800/80 border border-gray-700/60 p-3.5 rounded-2xl rounded-tl-sm text-gray-200 max-w-[85%] leading-relaxed">
-                Hello! I am <strong>AgriBot</strong>, developed for the Jain University TD-PCL project. Ask me any question regarding crop diseases, chemical dilutions, bio-pesticides, or model architecture!
+                Hello! I am <strong>AgriBot</strong>, your AI Crop Pathology Assistant. Ask me any question regarding crop diseases, chemical dilutions, bio-pesticides, or spray schedules!
               </div>
             </div>
           </div>
@@ -536,82 +532,6 @@
               <div class="text-sm font-bold text-white" id="calcWater">Required Spray Water: <strong>400 Liters</strong></div>
               <div class="text-sm font-bold text-emerald-400" id="calcChemical">Active Chemical Formulation: <strong>1,000 grams (1.0 kg) of Mancozeb 75% WP</strong></div>
               <div class="text-[11px] text-gray-400 pt-1">Apply in early morning or late evening using a hollow-cone knapsack nozzle for thorough foliar coverage.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================================================== -->
-      <!-- MODULE 5: ARCHITECTURE & BENCHMARKS                   -->
-      <!-- ===================================================== -->
-      <section id="view-research" class="view-section hidden space-y-6">
-        <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-6 backdrop-blur-md space-y-5">
-          <div class="flex justify-between items-start flex-wrap gap-4">
-            <div>
-              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Deep Learning System Architecture</span>
-              <h2 class="text-xl font-extrabold text-white mt-1">Model Architecture, Benchmarks & Explainability Matrix</h2>
-              <p class="text-xs text-gray-400 mt-1">Multi-crop comparative evaluation across MobileNetV2, ResNet-50, and VGG-16.</p>
-            </div>
-          </div>
-
-          <!-- Benchmarks Matrix -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border border-gray-800 rounded-xl overflow-hidden">
-              <thead class="bg-gray-950 text-gray-300 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="p-3 border-b border-gray-800">Architecture</th>
-                  <th class="p-3 border-b border-gray-800">Parameters</th>
-                  <th class="p-3 border-b border-gray-800">Model Footprint</th>
-                  <th class="p-3 border-b border-gray-800">Inference Latency (CPU)</th>
-                  <th class="p-3 border-b border-gray-800">Validation Accuracy</th>
-                  <th class="p-3 border-b border-gray-800">F1-Score</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-800/60">
-                <tr>
-                  <td class="p-3 font-semibold text-gray-300">VGG-16</td>
-                  <td class="p-3">138.3 M</td>
-                  <td class="p-3">528 MB</td>
-                  <td class="p-3">118 ms</td>
-                  <td class="p-3">96.1%</td>
-                  <td class="p-3">0.958</td>
-                </tr>
-                <tr>
-                  <td class="p-3 font-semibold text-gray-300">ResNet-50</td>
-                  <td class="p-3">25.6 M</td>
-                  <td class="p-3">98 MB</td>
-                  <td class="p-3">44 ms</td>
-                  <td class="p-3 font-bold text-white">97.9%</td>
-                  <td class="p-3">0.978</td>
-                </tr>
-                <tr class="bg-emerald-950/30 text-emerald-300 font-bold border-l-4 border-emerald-500">
-                  <td class="p-3">MobileNetV2 (Selected)</td>
-                  <td class="p-3">3.5 M</td>
-                  <td class="p-3">14.1 MB</td>
-                  <td class="p-3">12.4 ms</td>
-                  <td class="p-3">97.4%</td>
-                  <td class="p-3">0.973</td>
-                </tr>
-                <tr>
-                  <td class="p-3 font-semibold text-gray-300">EfficientNet-B0</td>
-                  <td class="p-3">5.3 M</td>
-                  <td class="p-3">21.0 MB</td>
-                  <td class="p-3">21.2 ms</td>
-                  <td class="p-3">97.1%</td>
-                  <td class="p-3">0.970</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300">
-            <div class="p-4 bg-gray-950 border border-gray-800 rounded-xl space-y-2">
-              <h4 class="font-bold text-white">Depthwise Separable Convolutions:</h4>
-              <p class="leading-relaxed text-gray-400">MobileNetV2 decouples standard convolution into a 3x3 depthwise convolution and a 1x1 pointwise linear bottleneck. This yields an <strong>8.8x reduction in computational operations (MACs)</strong> without compromising feature accuracy.</p>
-            </div>
-            <div class="p-4 bg-gray-950 border border-gray-800 rounded-xl space-y-2">
-              <h4 class="font-bold text-white">Grad-CAM Visual Verification:</h4>
-              <p class="leading-relaxed text-gray-400">Neuron activation gradients flowing into the final convolutional layer are linearly combined and rectified: <code>L_GradCAM = ReLU(∑ α_k * A^k)</code>, visually proving the network focuses on real lesions rather than background artifacts.</p>
             </div>
           </div>
         </div>

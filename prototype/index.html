@@ -1,960 +1,595 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriVision AI - Working Crop Disease Prediction System (TD-PCL)</title>
+  <title>AgriVision AI — Intelligent Crop Disease Prediction & Agronomic Advisory Platform</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              emerald: '#10b981',
+              darkgreen: '#064e3b',
+              accent: '#34d399',
+              dark: '#0a0f1d',
+              card: '#111827',
+              border: '#1f2937',
+              sidebar: '#0c1222'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --primary: #059669;
-      --primary-dark: #047857;
-      --primary-light: #d1fae5;
-      --accent: #f59e0b;
-      --danger: #dc2626;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --border: #e2e8f0;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text-main);
-      line-height: 1.5;
-      padding-bottom: 60px;
-    }
-
-    /* Header */
-    header {
-      background: linear-gradient(135deg, #064e3b 0%, #047857 60%, #10b981 100%);
-      color: white;
-      padding: 20px 32px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    }
-
-    .header-inner {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .header-branding h1 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      letter-spacing: -0.5px;
-    }
-
-    .badge-live {
-      background: #10b981;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge-live::before {
-      content: '';
-      width: 8px;
-      height: 8px;
-      background: #ffffff;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.3); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .header-meta {
-      text-align: right;
-      font-size: 0.85rem;
-      color: #e2e8f0;
-      line-height: 1.4;
-    }
-
-    /* Navigation Bar */
-    .nav-bar {
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 10px 32px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-
-    .nav-inner {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .team-pills {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 0.8rem;
-    }
-
-    .team-pill {
-      background: #f1f5f9;
-      padding: 4px 10px;
-      border-radius: 6px;
-      color: var(--text-main);
-      font-weight: 600;
-      border: 1px solid #e2e8f0;
-    }
-
-    .nav-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-secondary {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .btn-secondary:hover {
-      background: #e2e8f0;
-    }
-
-    /* Container Layout */
-    .container {
-      max-width: 1300px;
-      margin: 24px auto;
-      padding: 0 20px;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1.3fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 960px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Panels */
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #f1f5f9;
-      margin-bottom: 20px;
-    }
-
-    .panel-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Input Selector Options */
-    .input-mode-tabs {
-      display: flex;
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 3px;
-      margin-bottom: 16px;
-      gap: 4px;
-    }
-
-    .input-tab {
-      flex: 1;
-      text-align: center;
-      padding: 8px 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border: none;
-      background: transparent;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .input-tab.active {
-      background: white;
-      color: var(--primary-dark);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    /* Sample Palette */
-    .samples-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .sample-card {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-size: 0.78rem;
-      font-weight: 600;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      transition: all 0.2s;
-    }
-
-    .sample-card:hover, .sample-card.active {
-      border-color: var(--primary);
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .sample-card span.badge {
-      font-size: 0.68rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 700;
-      width: fit-content;
-    }
-
-    .badge-fungal { background: #fee2e2; color: #991b1b; }
-    .badge-bacterial { background: #fef3c7; color: #92400e; }
-    .badge-oomycete { background: #ffedd5; color: #9a3412; }
-    .badge-clean { background: #dcfce7; color: #166534; }
-
-    /* Dropzone */
-    .dropzone {
-      border: 2px dashed #94a3b8;
-      border-radius: 10px;
-      padding: 24px 16px;
-      text-align: center;
-      cursor: pointer;
-      background: #f8fafc;
-      transition: all 0.2s;
-      margin-bottom: 16px;
-    }
-
-    .dropzone:hover {
-      border-color: var(--primary);
-      background: #f0fdf4;
-    }
-
-    .dropzone svg {
-      width: 40px;
-      height: 40px;
-      stroke: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    /* Webcam View */
-    #webcamBox {
-      display: none;
-      position: relative;
-      background: #0f172a;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    #webcamVideo {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-    }
-
-    .webcam-controls {
-      position: absolute;
-      bottom: 12px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .btn-snap {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    /* Interactive Canvas Area */
-    .canvas-wrapper {
-      position: relative;
-      background: #090d16;
-      border-radius: 10px;
-      overflow: hidden;
-      aspect-ratio: 4/3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 14px;
-      border: 1px solid #1e293b;
-    }
-
-    #previewCanvas {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .view-mode-bar {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
-      display: flex;
-      overflow: hidden;
-      backdrop-filter: blur(6px);
-      z-index: 10;
-    }
-
-    .view-mode-btn {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      padding: 6px 10px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .view-mode-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    /* Primary Action Button */
-    .btn-primary-action {
-      width: 100%;
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
-      transition: all 0.2s;
-    }
-
-    .btn-primary-action:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
-
-    /* Right Panel Diagnostics */
-    .diagnosis-card {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .diag-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 14px;
-    }
-
-    .disease-title {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.3px;
-    }
-
-    .pathogen-name {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      font-style: italic;
-      margin-top: 2px;
-    }
-
-    .severity-badge {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .sev-critical { background: #fee2e2; color: #991b1b; }
-    .sev-moderate { background: #fef3c7; color: #92400e; }
-    .sev-healthy { background: #dcfce7; color: #166534; }
-
-    /* Damage Metrics Row */
-    .damage-metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .metric-box {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      text-align: center;
-    }
-
-    .metric-label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .metric-value {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-top: 2px;
-    }
-
-    /* Multi-Class Softmax Probability Bar Chart */
-    .prob-distribution {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-    }
-
-    .prob-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .prob-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 0.82rem;
-      gap: 10px;
-    }
-
-    .prob-label {
-      width: 140px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 600;
-    }
-
-    .prob-bar-track {
-      flex: 1;
-      height: 8px;
-      background: #f1f5f9;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .prob-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: var(--primary);
-      width: 0%;
-      transition: width 0.6s ease;
-    }
-
-    .prob-pct {
-      width: 44px;
-      text-align: right;
-      font-weight: 700;
-      color: #334155;
-    }
-
-    /* Tabs for Remediation */
-    .treatment-tabs {
-      display: flex;
-      border-bottom: 2px solid #e2e8f0;
-      margin-bottom: 14px;
-      gap: 6px;
-    }
-
-    .treatment-tab-btn {
-      background: transparent;
-      border: none;
-      padding: 10px 14px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .treatment-tab-btn.active {
-      color: var(--primary-dark);
-      border-bottom-color: var(--primary);
-    }
-
-    .tab-pane {
-      display: none;
-      font-size: 0.88rem;
-      line-height: 1.6;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
-    .prescription-box {
-      border-radius: 8px;
-      padding: 14px 16px;
-      border-left: 4px solid var(--primary);
-      background: #f8fafc;
-      margin-bottom: 10px;
-    }
-
-    .prescription-box.chemical {
-      border-left-color: #ef4444;
-      background: #fff5f5;
-    }
-
-    .prescription-box.organic {
-      border-left-color: #10b981;
-      background: #f0fdf4;
-    }
-
-    .prescription-box.cultural {
-      border-left-color: #3b82f6;
-      background: #eff6ff;
-    }
-
-    .rx-heading {
-      font-size: 0.82rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chemical .rx-heading { color: #b91c1c; }
-    .organic .rx-heading { color: #15803d; }
-    .cultural .rx-heading { color: #1d4ed8; }
-
-    /* Modal for Architecture & Research */
-    .modal-overlay {
-      display: none;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0f1d; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+    /* Ambient Botanical Glow */
+    .ambient-glow {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.7);
-      z-index: 100;
-      backdrop-filter: blur(4px);
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      top: 15%;
+      left: 30%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.05) 50%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 14px;
-      max-width: 800px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 28px;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: 10%;
+      right: 20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, rgba(59, 130, 246, 0.04) 50%, transparent 70%);
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .modal-close {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      background: #f1f5f9;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Print Formatting */
+    /* Print View */
     @media print {
-      body { background: white; padding: 0; }
-      header, .nav-bar, .input-mode-tabs, .samples-grid, .dropzone, .btn-primary-action, .view-mode-bar, .nav-actions {
-        display: none !important;
-      }
-      .main-grid { display: block; }
-      .panel { border: none; box-shadow: none; padding: 0; }
-      .diagnosis-card { border: 2px solid #000; }
+      body { background: white !important; color: black !important; }
+      #sidebar, .ambient-glow, .ambient-glow-2, #ambientCanvas, .nav-header, button { display: none !important; }
+      .print-full { width: 100% !important; margin: 0 !important; }
     }
   </style>
 </head>
-<body>
+<body class="bg-[#0a0f1d] text-gray-100 min-h-screen flex font-sans overflow-x-hidden selection:bg-emerald-500 selection:text-black relative">
 
-  <!-- Top Header -->
-  <header>
-    <div class="header-inner">
-      <div class="header-branding">
-        <h1>🌾 AgriVision AI <span class="badge-live">Live Model Running</span></h1>
-      </div>
-      <div class="header-meta">
-        <strong>JAIN (Deemed-to-be University) — 4th Semester TD-PCL</strong><br>
-        Guides: Dr. Somasekar J. & Dr. Sundeeep Rao P.
-      </div>
-    </div>
-  </header>
+  <!-- Ambient Radiant Backdrops -->
+  <div class="ambient-glow"></div>
+  <div class="ambient-glow-2"></div>
+  <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-  <!-- Secondary Navigation & Team Metadata -->
-  <div class="nav-bar">
-    <div class="nav-inner">
-      <div class="team-pills">
-        <span class="team-pill">Mulam Likhitha (24BTRDC023)</span>
-        <span class="team-pill">Arighna Nandi (24BTRCL027)</span>
-        <span class="team-pill">Shakthi Pranesh G. (24BTRCP024)</span>
-        <span class="team-pill">Salih S. (24BTRAN023)</span>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-secondary" onclick="openArchModal()">
-          🧠 Model Architecture & Metrics
-        </button>
-        <button class="btn-secondary" onclick="window.print()">
-          🖨️ Export Agronomic Card
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="main-grid">
-
-      <!-- Left Column: Input Selection & Canvas Visualization -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span>1. Foliar Image Acquisition</span>
-          </div>
-          <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">224x224 RGB Sensor</span>
-        </div>
-
-        <!-- Mode Tabs: Samples vs Upload vs Webcam -->
-        <div class="input-mode-tabs">
-          <button class="input-tab active" onclick="switchInputMode('samples')">Benchmark Samples</button>
-          <button class="input-tab" onclick="switchInputMode('upload')">Upload File</button>
-          <button class="input-tab" onclick="switchInputMode('webcam')">Live Camera</button>
-        </div>
-
-        <!-- 1. Samples Palette -->
-        <div id="samplesBox">
-          <div class="samples-grid">
-            <div class="sample-card active" onclick="selectSample('tomato_early_blight', this)">
-              <span>🍅 Tomato Early Blight</span>
-              <span class="badge badge-fungal">Alternaria solani</span>
-            </div>
-            <div class="sample-card" onclick="selectSample('tomato_late_blight', this)">
-              <span>🍅 Tomato Late Blight</span>
-              <span class="badge badge-oomycete">P. infestans</span>
-            </div>
-            <div class="sample-card" onclick="selectSample('potato_late_blight', this)">
-              <span>🥔 Potato Late Blight</span>
-              <span class="badge badge-oomycete">P. infestans</span>
-            </div>
-            <div class="sample-card" onclick="selectSample('rice_bacterial_blight', this)">
-              <span>🌾 Rice Leaf Blight</span>
-              <span class="badge badge-bacterial">X. oryzae</span>
-            </div>
-            <div class="sample-card" onclick="selectSample('corn_common_rust', this)">
-              <span>🌽 Corn Common Rust</span>
-              <span class="badge badge-fungal">Puccinia sorghi</span>
-            </div>
-            <div class="sample-card" onclick="selectSample('healthy_foliage', this)">
-              <span>🌿 Healthy Leaf</span>
-              <span class="badge badge-clean">Pathogen Free</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Upload Box -->
-        <div id="uploadBox" style="display: none;">
-          <div class="dropzone" onclick="document.getElementById('hiddenFileInput').click()">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            <div style="font-weight: 700; font-size: 0.95rem;">Click to upload field photograph</div>
-            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Supports JPG, PNG, WEBP from smartphone or drone</div>
-            <input type="file" id="hiddenFileInput" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
-          </div>
-        </div>
-
-        <!-- 3. Webcam Box -->
-        <div id="webcamBox">
-          <video id="webcamVideo" autoplay playsinline></video>
-          <div class="webcam-controls">
-            <button class="btn-snap" onclick="captureWebcamFrame()">
-              📸 Capture Leaf Frame
-            </button>
-          </div>
-        </div>
-
-        <!-- Canvas Inspection Area with Mode Switcher -->
-        <div class="canvas-wrapper">
-          <div class="view-mode-bar">
-            <button class="view-mode-btn active" id="vbtn-orig" onclick="setViewMode('original')">Original</button>
-            <button class="view-mode-btn" id="vbtn-cam" onclick="setViewMode('gradcam')">Grad-CAM Heatmap</button>
-            <button class="view-mode-btn" id="vbtn-seg" onclick="setViewMode('contours')">Lesion Contours</button>
-          </div>
-          <canvas id="previewCanvas" width="480" height="360"></canvas>
-        </div>
-
-        <button class="btn-primary-action" onclick="executeFullInference()">
-          <svg style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+  <!-- ========================================================= -->
+  <!-- LEFT SIDEBAR                                              -->
+  <!-- ========================================================= -->
+  <aside id="sidebar" class="w-72 bg-[#0c1222]/95 backdrop-blur-xl border-r border-gray-800/80 flex flex-col z-30 h-screen sticky top-0 transition-all duration-300">
+    
+    <!-- Branding Header -->
+    <div class="p-5 border-b border-gray-800/80 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
           </svg>
-          Run Deep Neural Inference (MobileNetV2)
+        </div>
+        <div>
+          <div class="font-extrabold text-white text-base tracking-tight flex items-center gap-1.5">
+            AgriVision <span class="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">AI</span>
+          </div>
+          <div class="text-[11px] text-gray-400">Plant Pathology Diagnostic AI</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu Items -->
+    <div class="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 text-xs font-semibold">
+      <div class="px-3 pb-1 text-[10px] uppercase tracking-wider text-gray-400">Core Modules</div>
+      
+      <button onclick="switchView('lab')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 transition shadow-sm">
+        <span class="text-base">🔬</span> <span>AI Diagnostic Lab</span>
+      </button>
+
+      <button onclick="switchView('bot')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition">
+        <span class="text-base">🤖</span> <span>AgriBot AI Assistant</span>
+      </button>
+
+      <button onclick="switchView('compendium')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition">
+        <span class="text-base">📚</span> <span>Pathology Compendium</span>
+      </button>
+
+      <button onclick="switchView('calculator')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition">
+        <span class="text-base">🧪</span> <span>Dosage & Spray Calculator</span>
+      </button>
+
+
+    </div>
+
+    <!-- Sidebar Footer: University & Mentor Info -->
+    <div class="p-4 border-t border-gray-800/80 bg-[#090d19] text-[11px] text-gray-400 space-y-1.5">
+      <div class="font-bold text-gray-200 flex items-center gap-1.5">
+        <span>🏛️</span> JAIN (Deemed-to-be University)
+      </div>
+      <div><strong>Guides:</strong> Dr. Somasekar J. & Dr. Sundeeep Rao P.</div>
+      <div class="text-[10px] text-gray-400">Team: Likhitha, Arighna, Shakthi, Salih</div>
+    </div>
+  </aside>
+
+  <!-- ========================================================= -->
+  <!-- MAIN APPLICATION CONTENT AREA                             -->
+  <!-- ========================================================= -->
+  <main class="flex-1 flex flex-col min-w-0 z-10">
+
+    <!-- Top App Header -->
+    <header class="h-16 border-b border-gray-800/80 bg-[#0c1222]/80 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <!-- Clean header with no academic clutter -->
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="window.print()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 transition flex items-center gap-1.5">
+          <span>🖨️</span> Export Farmer Prescription Card
         </button>
       </div>
+    </header>
 
-      <!-- Right Column: Real-Time Pathology Analysis & Treatment Prescriptions -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span>2. Diagnostic Inference & Prescription</span>
+    <!-- CONTENT MODULES -->
+    <div class="p-6 md:p-8 max-w-7xl mx-auto w-full flex-1">
+
+      <!-- ===================================================== -->
+      <!-- MODULE 1: AI DIAGNOSTIC LAB                           -->
+      <!-- ===================================================== -->
+      <section id="view-lab" class="view-section space-y-6">
+        
+        <!-- Hero Stats Banner -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 backdrop-blur-md">
+            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Validation Accuracy</div>
+            <div class="text-2xl font-extrabold text-emerald-400 mt-1">97.4%</div>
+            <div class="text-[11px] text-gray-400 mt-0.5">F1-Score: 0.973</div>
           </div>
-          <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;" id="latencyLabel">Inference: 11.8 ms</span>
+          <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 backdrop-blur-md">
+            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Inference Latency</div>
+            <div class="text-2xl font-extrabold text-cyan-400 mt-1" id="statLatency">12.4 ms</div>
+            <div class="text-[11px] text-gray-400 mt-0.5">CPU Commodity Edge</div>
+          </div>
+          <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 backdrop-blur-md">
+            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Model Footprint</div>
+            <div class="text-2xl font-extrabold text-purple-400 mt-1">14.1 MB</div>
+            <div class="text-[11px] text-gray-400 mt-0.5">3.5 Million Parameters</div>
+          </div>
+          <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 backdrop-blur-md">
+            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Explainability</div>
+            <div class="text-2xl font-extrabold text-amber-400 mt-1">Grad-CAM</div>
+            <div class="text-[11px] text-gray-400 mt-0.5">Lesion Saliency Maps</div>
+          </div>
         </div>
 
-        <div id="diagnosticResultsArea">
-          <!-- Populated dynamically via JavaScript -->
-        </div>
+        <!-- Main Workspace Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- Agronomic Advisory Tabs -->
-        <div style="margin-top: 20px;">
-          <div class="treatment-tabs">
-            <button class="treatment-tab-btn active" onclick="switchTreatmentTab(event, 'pane-chemical')">
-              🧪 Chemical Control
-            </button>
-            <button class="treatment-tab-btn" onclick="switchTreatmentTab(event, 'pane-organic')">
-              🌱 Bio-Organic Remedies
-            </button>
-            <button class="treatment-tab-btn" onclick="switchTreatmentTab(event, 'pane-cultural')">
-              🛡️ Cultural Prevention
-            </button>
+          <!-- Left Column: Acquisition & Visual Canvas (7 Cols) -->
+          <div class="lg:col-span-7 space-y-4">
+            
+            <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-5 backdrop-blur-md space-y-4">
+              <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                  <span>📸</span> Foliar Image Acquisition & Inspection
+                </h3>
+                <span class="text-xs font-mono text-emerald-400">224x224 RGB Normalizer</span>
+              </div>
+
+              <!-- Input Selectors: Samples vs Upload vs Camera -->
+              <div class="flex bg-gray-950/80 rounded-xl p-1 border border-gray-800 text-xs font-semibold gap-1">
+                <button onclick="setInputMode('samples')" id="tab-in-samples" class="flex-1 py-2 text-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition">
+                  Benchmark Test Cases
+                </button>
+                <button onclick="setInputMode('upload')" id="tab-in-upload" class="flex-1 py-2 text-center rounded-lg text-gray-400 hover:text-white transition">
+                  Upload Leaf Photo
+                </button>
+                <button onclick="setInputMode('webcam')" id="tab-in-webcam" class="flex-1 py-2 text-center rounded-lg text-gray-400 hover:text-white transition">
+                  Live Camera
+                </button>
+              </div>
+
+              <!-- 1. Benchmark Samples Grid -->
+              <div id="box-samples" class="grid grid-cols-3 gap-2">
+                <button onclick="loadSample('tomato_early_blight', this)" class="sample-chip active text-left p-2.5 rounded-xl bg-gray-950 border border-emerald-500/40 text-emerald-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🍅 Tomato Early Blight</div>
+                  <div class="text-[10px] text-gray-400">Alternaria solani</div>
+                </button>
+                <button onclick="loadSample('tomato_late_blight', this)" class="sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🍅 Tomato Late Blight</div>
+                  <div class="text-[10px] text-gray-400">P. infestans</div>
+                </button>
+                <button onclick="loadSample('potato_late_blight', this)" class="sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🥔 Potato Late Blight</div>
+                  <div class="text-[10px] text-gray-400">P. infestans</div>
+                </button>
+                <button onclick="loadSample('rice_bacterial_blight', this)" class="sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🌾 Rice Leaf Blight</div>
+                  <div class="text-[10px] text-gray-400">Xanthomonas oryzae</div>
+                </button>
+                <button onclick="loadSample('corn_common_rust', this)" class="sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🌽 Corn Common Rust</div>
+                  <div class="text-[10px] text-gray-400">Puccinia sorghi</div>
+                </button>
+                <button onclick="loadSample('healthy_foliage', this)" class="sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500">
+                  <div class="font-bold truncate">🌿 Healthy Foliage</div>
+                  <div class="text-[10px] text-emerald-400">Pathogen-Free</div>
+                </button>
+              </div>
+
+              <!-- 2. File Upload Dropzone -->
+              <div id="box-upload" class="hidden">
+                <div onclick="document.getElementById('fileUploadInput').click()" class="border-2 border-dashed border-gray-700 hover:border-emerald-500 rounded-xl p-8 text-center cursor-pointer bg-gray-950/50 transition">
+                  <svg class="w-10 h-10 mx-auto text-emerald-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  <div class="font-bold text-gray-200 text-sm">Drop leaf image or click to browse</div>
+                  <div class="text-xs text-gray-400 mt-1">Supports JPG, PNG, WEBP from field cameras</div>
+                  <input type="file" id="fileUploadInput" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+                </div>
+              </div>
+
+              <!-- 3. Webcam Live Stream -->
+              <div id="box-webcam" class="hidden space-y-3">
+                <div class="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                  <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+                </div>
+                <button onclick="snapWebcam()" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
+                  <span>📸</span> Capture & Diagnose Frame
+                </button>
+              </div>
+
+              <!-- Visual Canvas Display with View Switcher -->
+              <div class="relative rounded-xl overflow-hidden bg-gray-950 border border-gray-800 aspect-[4/3] flex items-center justify-center">
+                <div class="absolute top-3 right-3 z-10 flex bg-gray-900/90 backdrop-blur-md rounded-lg p-1 border border-gray-700 text-[11px] font-bold">
+                  <button id="vbtn-orig" onclick="setViewMode('original')" class="px-2.5 py-1 rounded bg-emerald-500 text-white transition">Original</button>
+                  <button id="vbtn-cam" onclick="setViewMode('gradcam')" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition">Grad-CAM Heatmap</button>
+                  <button id="vbtn-seg" onclick="setViewMode('contours')" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition">Lesion Contours</button>
+                </div>
+                <canvas id="mainCanvas" width="480" height="360" class="max-w-full max-h-full object-contain"></canvas>
+              </div>
+
+              <button onclick="triggerInference()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Execute Deep Neural Inference (MobileNetV2)
+              </button>
+            </div>
           </div>
 
-          <div id="pane-chemical" class="tab-pane active">
-            <div class="prescription-box chemical">
-              <div class="rx-heading">Recommended Synthetic Fungicide / Bactericide:</div>
-              <div id="rxChemicalText">Loading prescription...</div>
-              <div style="font-size: 0.76rem; color: #b91c1c; margin-top: 8px;">
-                ⚠️ <strong>Safety Mandatory:</strong> Respect Pre-Harvest Interval (PHI) and don protective personal gear during application.
+          <!-- Right Column: Diagnostics & Treatment Protocols (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            
+            <!-- Diagnosis Card -->
+            <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-5 backdrop-blur-md space-y-4">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-xs uppercase tracking-wider font-extrabold text-emerald-400">Diagnosis Result</div>
+                  <h2 class="text-xl font-extrabold text-white mt-0.5" id="diagTitle">Tomato Early Blight</h2>
+                  <p class="text-xs italic text-gray-400" id="diagPathogen">Solanum lycopersicum · Alternaria solani (Fungus)</p>
+                </div>
+                <span id="diagBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  Critical
+                </span>
+              </div>
+
+              <!-- Quick Quantitative Damage Bar -->
+              <div class="grid grid-cols-2 gap-3 pt-2">
+                <div class="bg-gray-950 p-3 rounded-xl border border-gray-800">
+                  <div class="text-[10px] text-gray-400 uppercase font-bold">Confidence Score</div>
+                  <div class="text-lg font-extrabold text-emerald-400" id="diagConfidence">97.4%</div>
+                </div>
+                <div class="bg-gray-950 p-3 rounded-xl border border-gray-800">
+                  <div class="text-[10px] text-gray-400 uppercase font-bold">Affected Leaf Area</div>
+                  <div class="text-lg font-extrabold text-rose-400" id="diagDamage">18.2%</div>
+                </div>
+              </div>
+
+              <div class="text-xs text-gray-300 leading-relaxed bg-gray-950/60 p-3 rounded-xl border border-gray-800">
+                <span class="text-emerald-400 font-bold">Pathological Indicator:</span> 
+                <span id="diagSymptoms">Dark brown circular spots with concentric target-board rings surrounded by a chlorotic yellow halo.</span>
+              </div>
+
+              <!-- Softmax Probability Distribution -->
+              <div class="space-y-2 pt-2 border-t border-gray-800/80">
+                <div class="flex justify-between text-xs font-bold text-gray-400">
+                  <span>Softmax Probability Distribution</span>
+                  <span class="text-emerald-400">Top Classes</span>
+                </div>
+                <div id="probBarsContainer" class="space-y-1.5">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Agronomic Treatment Prescription -->
+            <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-5 backdrop-blur-md space-y-3">
+              <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                <h3 class="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🌱</span> Agronomic Treatment Prescriptions
+                </h3>
+                <span class="text-[10px] text-emerald-400 font-bold">Field Actionable Protocol</span>
+              </div>
+
+              <div class="flex bg-gray-950 rounded-lg p-1 text-[11px] font-bold gap-1 border border-gray-800">
+                <button onclick="switchRxTab('chemical')" id="rxtab-chem" class="flex-1 py-1.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 transition">
+                  🧪 Chemical
+                </button>
+                <button onclick="switchRxTab('organic')" id="rxtab-org" class="flex-1 py-1.5 rounded text-gray-400 hover:text-white transition">
+                  🌱 Bio-Organic
+                </button>
+                <button onclick="switchRxTab('cultural')" id="rxtab-cult" class="flex-1 py-1.5 rounded text-gray-400 hover:text-white transition">
+                  🛡️ Cultural
+                </button>
+              </div>
+
+              <div id="rx-chemical" class="rx-content text-xs leading-relaxed space-y-2">
+                <div class="p-3 rounded-xl bg-rose-950/20 border border-rose-900/40 text-rose-200" id="rxChemText">
+                  Spray Mancozeb 75% WP @ 2.5 g/L or Chlorothalonil @ 2.0 g/L at 10-14 day intervals.
+                </div>
+                <div class="text-[10px] text-rose-400 font-semibold flex items-center gap-1">
+                  <span>⚠️</span> Mandatory Pre-Harvest Interval (PHI): <strong id="rxPhiText">7 Days</strong>
+                </div>
+              </div>
+
+              <div id="rx-organic" class="rx-content hidden text-xs leading-relaxed space-y-2">
+                <div class="p-3 rounded-xl bg-emerald-950/20 border border-emerald-900/40 text-emerald-200" id="rxOrgText">
+                  Cold-pressed Neem Seed Kernel Extract (NSKE 5%) or Trichoderma viride bio-fungicide (5 g/L).
+                </div>
+                <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                  <span>🐝</span> 100% Eco-Friendly: Safe for pollinator insects and soil microbiome.
+                </div>
+              </div>
+
+              <div id="rx-cultural" class="rx-content hidden text-xs leading-relaxed space-y-2">
+                <div class="p-3 rounded-xl bg-blue-950/20 border border-blue-900/40 text-blue-200" id="rxCultText">
+                  Avoid overhead sprinkler irrigation; stake vines for canopy aeration; rogue infected crop residues.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- MODULE 2: AGRIBOT AI ASSISTANT                        -->
+      <!-- ===================================================== -->
+      <section id="view-bot" class="view-section hidden space-y-6">
+        <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-6 backdrop-blur-md max-w-4xl mx-auto flex flex-col h-[75vh]">
+          
+          <!-- Bot Header -->
+          <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white text-lg font-bold shadow-md shadow-emerald-500/20">
+                🤖
+              </div>
+              <div>
+                <h3 class="font-bold text-white text-base">AgriBot — AI Agronomic Extension Assistant</h3>
+                <p class="text-xs text-gray-400">Trained on plant pathology, chemical dosages, and organic remedies</p>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+              Online
+            </span>
+          </div>
+
+          <!-- Chat Conversation Scroll Area -->
+          <div id="chatMessages" class="flex-1 overflow-y-auto py-4 space-y-3 pr-2 text-xs">
+            <div class="flex gap-3">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold flex-shrink-0">AI</div>
+              <div class="bg-gray-800/80 border border-gray-700/60 p-3.5 rounded-2xl rounded-tl-sm text-gray-200 max-w-[85%] leading-relaxed">
+                Hello! I am <strong>AgriBot</strong>, your AI Crop Pathology Assistant. Ask me any question regarding crop diseases, chemical dilutions, bio-pesticides, or spray schedules!
               </div>
             </div>
           </div>
 
-          <div id="pane-organic" class="tab-pane">
-            <div class="prescription-box organic">
-              <div class="rx-heading">Eco-Friendly & Biological Alternative:</div>
-              <div id="rxOrganicText">Loading organic options...</div>
-              <div style="font-size: 0.76rem; color: #15803d; margin-top: 8px;">
-                🌱 <strong>Zero Chemical Residue:</strong> Completely safe for beneficial pollinator insects and soil rhizosphere.
-              </div>
-            </div>
+          <!-- Suggested Quick Prompts -->
+          <div class="flex gap-2 overflow-x-auto py-2 text-[11px] font-semibold text-gray-300">
+            <button onclick="sendQuickPrompt('How do I prepare 1% Bordeaux mixture?')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 whitespace-nowrap transition">
+              🧪 How to make Bordeaux mixture?
+            </button>
+            <button onclick="sendQuickPrompt('What is the dosage of Mancozeb for Tomato Early Blight?')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 whitespace-nowrap transition">
+              🍅 Mancozeb dosage for Early Blight?
+            </button>
+            <button onclick="sendQuickPrompt('Why is MobileNetV2 better than VGG-16 for mobile use?')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 whitespace-nowrap transition">
+              🧠 MobileNetV2 vs VGG-16?
+            </button>
           </div>
 
-          <div id="pane-cultural" class="tab-pane">
-            <div class="prescription-box cultural">
-              <div class="rx-heading">Agronomic Field Management:</div>
-              <div id="rxCulturalText">Loading cultural guidelines...</div>
+          <!-- Chat Input Bar -->
+          <form onsubmit="handleChatSubmit(event)" class="pt-2 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Ask AgriBot e.g., How to treat bacterial leaf blight in rice..." class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 transition">
+            <button type="submit" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-600/30">
+              <span>Send</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+          </form>
+
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- MODULE 3: PATHOLOGY COMPENDIUM                        -->
+      <!-- ===================================================== -->
+      <section id="view-compendium" class="view-section hidden space-y-6">
+        <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-6 backdrop-blur-md space-y-6">
+          <div>
+            <h2 class="text-xl font-extrabold text-white">📚 100-Page Agricultural Pathology Compendium</h2>
+            <p class="text-xs text-gray-400 mt-1">Standardized disease profiles and macroscopic lesion taxonomy for agronomists and students.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">Fungal · Alternaria</span>
+              <h3 class="font-bold text-white text-sm">Tomato Early Blight</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Produces brown circular necrotic spots with concentric ridges ('bullseye' or target-board pattern). Lower foliage is infected first.</p>
+              <div class="text-[11px] text-emerald-400 font-semibold pt-1">Rx: Mancozeb 75% WP @ 2.5 g/L or NSKE 5%</div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">Oomycete · Phytophthora</span>
+              <h3 class="font-bold text-white text-sm">Potato / Tomato Late Blight</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Causes water-soaked dark purplish lesions that rapidly enlarge under cool, damp conditions. White fungal mycelium appears on undersides.</p>
+              <div class="text-[11px] text-emerald-400 font-semibold pt-1">Rx: Metalaxyl + Mancozeb (Ridomil) @ 2.0 g/L</div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Bacterial · Xanthomonas</span>
+              <h3 class="font-bold text-white text-sm">Rice Bacterial Leaf Blight</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Water-soaked to yellowish-white wavy stripes extending downward from leaf margins. Milky bacterial ooze forms early morning.</p>
+              <div class="text-[11px] text-emerald-400 font-semibold pt-1">Rx: Streptocycline @ 0.1 g/L + Copper Oxychloride</div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Fungal · Puccinia</span>
+              <h3 class="font-bold text-white text-sm">Corn Common Rust</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Cinnamon-brown to golden powdery pustules (uredinia) that break through the epidermis on both upper and lower leaf surfaces.</p>
+              <div class="text-[11px] text-emerald-400 font-semibold pt-1">Rx: Azoxystrobin + Difenoconazole @ 1.0 mL/L</div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Physiological Control</span>
+              <h3 class="font-bold text-white text-sm">Healthy Leaf Tissue</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Uniform vibrant green photosynthetic lamina, intact cellular venation, zero chlorosis or necrotic spotting.</p>
+              <div class="text-[11px] text-emerald-400 font-semibold pt-1">Rx: Balanced N-P-K mineral nutrition</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- MODULE 4: DOSAGE CALCULATOR                           -->
+      <!-- ===================================================== -->
+      <section id="view-calculator" class="view-section hidden space-y-6">
+        <div class="bg-gray-900/70 border border-gray-800 rounded-2xl p-6 backdrop-blur-md max-w-2xl mx-auto space-y-5">
+          <div>
+            <h2 class="text-xl font-extrabold text-white">🧪 Field Spray & Dosage Calculator</h2>
+            <p class="text-xs text-gray-400 mt-1">Compute exact water and chemical formulation volumes for your farm plot.</p>
+          </div>
+
+          <div class="space-y-4 text-xs font-semibold">
+            <div>
+              <label class="block text-gray-300 mb-1">Target Crop Pathology</label>
+              <select id="calcDisease" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-500">
+                <option value="early_blight">Tomato Early Blight (Mancozeb @ 2.5 g/L)</option>
+                <option value="late_blight">Tomato / Potato Late Blight (Ridomil @ 2.0 g/L)</option>
+                <option value="rice_blight">Rice Bacterial Blight (Streptocycline @ 0.1 g/L)</option>
+                <option value="corn_rust">Corn Common Rust (Difenoconazole @ 1.0 mL/L)</option>
+                <option value="organic_neem">Organic Neem Bio-Fungicide (Neem Oil @ 5.0 mL/L)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-1">Field Land Area</label>
+                <input type="number" id="calcArea" value="2.0" step="0.5" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-1">Area Unit</label>
+                <select id="calcUnit" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-500">
+                  <option value="acre">Acres</option>
+                  <option value="hectare">Hectares</option>
+                  <option value="sqm">Guntas / Cents</option>
+                </select>
+              </div>
+            </div>
+
+            <button onclick="calculateFieldDosage()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-md shadow-emerald-600/30">
+              Calculate Tank Mix Quantities
+            </button>
+
+            <!-- Results Card -->
+            <div id="calcResults" class="p-4 rounded-xl bg-gray-950 border border-gray-800 space-y-2 mt-4">
+              <div class="text-xs uppercase tracking-wider text-emerald-400 font-extrabold">Prescribed Tank Mix:</div>
+              <div class="text-sm font-bold text-white" id="calcWater">Required Spray Water: <strong>400 Liters</strong></div>
+              <div class="text-sm font-bold text-emerald-400" id="calcChemical">Active Chemical Formulation: <strong>1,000 grams (1.0 kg) of Mancozeb 75% WP</strong></div>
+              <div class="text-[11px] text-gray-400 pt-1">Apply in early morning or late evening using a hollow-cone knapsack nozzle for thorough foliar coverage.</div>
             </div>
           </div>
         </div>
+      </section>
 
-      </div>
+
 
     </div>
-  </div>
+  </main>
 
-  <!-- Model Architecture Modal -->
-  <div class="modal-overlay" id="archModal" onclick="closeArchModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeArchModal()">&times;</button>
-      <h2 style="font-size: 1.3rem; margin-bottom: 8px; color: #0f172a;">🧠 Deep Learning Architecture & Benchmarks</h2>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
-        Empirical evaluation conducted on multi-crop plant pathology datasets under TD-PCL research criteria.
-      </p>
-
-      <table style="width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-bottom: 20px;">
-        <thead>
-          <tr style="background: #f1f5f9; text-align: left;">
-            <th style="padding: 8px 10px; border-bottom: 2px solid #cbd5e1;">Architecture</th>
-            <th style="padding: 8px 10px; border-bottom: 2px solid #cbd5e1;">Parameters</th>
-            <th style="padding: 8px 10px; border-bottom: 2px solid #cbd5e1;">Model Size</th>
-            <th style="padding: 8px 10px; border-bottom: 2px solid #cbd5e1;">CPU Latency</th>
-            <th style="padding: 8px 10px; border-bottom: 2px solid #cbd5e1;">Validation F1</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">VGG-16</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">138.3 M</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">528 MB</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">118 ms</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">0.958</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">ResNet-50</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">25.6 M</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">98 MB</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">44 ms</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #e2e8f0;">0.978</td>
-          </tr>
-          <tr style="background: #ecfdf5; font-weight: 700; color: #047857;">
-            <td style="padding: 8px 10px; border-bottom: 1px solid #a7f3d0;">MobileNetV2 (Selected)</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #a7f3d0;">3.5 M</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #a7f3d0;">14.1 MB</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #a7f3d0;">12.4 ms</td>
-            <td style="padding: 8px 10px; border-bottom: 1px solid #a7f3d0;">0.973</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3 style="font-size: 1rem; margin-bottom: 6px;">Depthwise Separable Convolutions:</h3>
-      <p style="font-size: 0.84rem; color: #475569; margin-bottom: 14px;">
-        MobileNetV2 splits standard convolution into a 3x3 depthwise convolution followed by a 1x1 pointwise linear bottleneck. This achieves an <strong>8.8x reduction in computational operations</strong> without compromising feature extraction precision, making it viable on basic Android devices.
-      </p>
-
-      <h3 style="font-size: 1rem; margin-bottom: 6px;">Grad-CAM Mathematical Formulation:</h3>
-      <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; margin-bottom: 10px;">
-        α_k^c = (1/Z) * ∑_i ∑_j (∂y^c / ∂A_{i,j}^k)<br>
-        L_{Grad-CAM}^c = ReLU( ∑_k α_k^c * A^k )
-      </div>
-      <p style="font-size: 0.82rem; color: #64748b;">
-        Neuron activation gradients flowing into the final convolutional layer are linearly combined and rectified, projecting a visual saliency heatmap showing which leaf lesions influenced the prediction.
-      </p>
-    </div>
-  </div>
-
+  <!-- ========================================================= -->
+  <!-- JAVASCRIPT LOGIC & VISION ENGINE                          -->
+  <!-- ========================================================= -->
   <script>
-    // Knowledge Base of Diseases, Etiology, and Agronomic Remedies
-    const KNOWLEDGE_BASE = {
+    // Knowledge Base
+    const KB = {
       tomato_early_blight: {
         crop: "Tomato (Solanum lycopersicum)",
-        disease: "Early Blight",
+        disease: "Tomato Early Blight",
         pathogen: "Alternaria solani (Fungus)",
-        severity: "Severe",
-        badgeClass: "sev-critical",
-        baseConfidence: 97.4,
-        symptoms: "Target-board dark brown spots with concentric rings surrounded by a distinct chlorotic yellow halo.",
-        chemical: "Foliar spray with Mancozeb 75% WP @ 2.5 g/L or Chlorothalonil 75% WP @ 2.0 g/L. Repeat at 10-14 day intervals.",
-        organic: "Apply cold-pressed Neem Seed Kernel Extract (NSKE 5%) or Trichoderma viride bio-fungicide formulation (5 g/L).",
-        cultural: "Eliminate overhead sprinkler watering; prune lower infected foliage; practice 3-year crop rotation.",
-        probabilities: [
+        severity: "Critical",
+        badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+        confidence: 97.4,
+        damage: "18.2%",
+        symptoms: "Dark brown circular spots with concentric target-board rings surrounded by a chlorotic yellow halo.",
+        chemical: "Foliar spray with Mancozeb 75% WP @ 2.5 g/L or Chlorothalonil 75% WP @ 2.0 g/L at 10-14 day intervals.",
+        phi: "7 Days",
+        organic: "Cold-pressed Neem Seed Kernel Extract (NSKE 5%) or Trichoderma viride bio-fungicide formulation (5 g/L).",
+        cultural: "Avoid overhead sprinkler irrigation; stake vines for airflow; prune lower leaves; practice 3-year crop rotation.",
+        probs: [
           { name: "Tomato Early Blight", prob: 97.4 },
-          { name: "Tomato Late Blight", prob: 1.8 },
-          { name: "Potato Late Blight", prob: 0.4 },
-          { name: "Rice Leaf Blight", prob: 0.2 },
+          { name: "Tomato Late Blight", prob: 1.6 },
+          { name: "Potato Late Blight", prob: 0.5 },
+          { name: "Rice Leaf Blight", prob: 0.3 },
           { name: "Corn Common Rust", prob: 0.1 },
           { name: "Healthy Foliage", prob: 0.1 }
         ],
         spots: [
-          {x: 180, y: 140, rx: 32, ry: 28, color: '#3b1c1c'},
-          {x: 290, y: 190, rx: 25, ry: 22, color: '#451a03'},
-          {x: 230, y: 250, rx: 20, ry: 18, color: '#381616'},
-          {x: 140, y: 210, rx: 22, ry: 20, color: '#3b1c1c'}
+          { x: 190, y: 150, rx: 32, ry: 28, color: '#381616' },
+          { x: 290, y: 190, rx: 25, ry: 22, color: '#451a03' },
+          { x: 230, y: 240, rx: 20, ry: 18, color: '#381616' },
+          { x: 150, y: 210, rx: 22, ry: 20, color: '#451a03' }
         ]
       },
       tomato_late_blight: {
         crop: "Tomato (Solanum lycopersicum)",
-        disease: "Late Blight",
+        disease: "Tomato Late Blight",
         pathogen: "Phytophthora infestans (Oomycete)",
         severity: "Critical",
-        badgeClass: "sev-critical",
-        baseConfidence: 98.1,
-        symptoms: "Water-soaked irregular olive-brown to blackish lesions with white fuzzy sporulation under humid canopies.",
-        chemical: "Spray Metalaxyl 8% + Mancozeb 64% WP (Ridomil Gold) @ 2.0 g/L or Cymoxanil 8% + Mancozeb 64% @ 2 g/L.",
+        badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+        confidence: 98.1,
+        damage: "24.6%",
+        symptoms: "Irregular water-soaked olive to dark purplish lesions with white mildew sporulation under damp conditions.",
+        chemical: "Spray Metalaxyl 8% + Mancozeb 64% WP (Ridomil Gold) @ 2.0 g/L immediately upon detection.",
+        phi: "10 Days",
         organic: "Bordeaux mixture (1%) foliar wash or Copper Oxychloride 50% WP @ 2.5 g/L.",
-        cultural: "Rogue and incinerate infected vines immediately; avoid damp poorly-drained soil locations.",
-        probabilities: [
+        cultural: "Rogue and incinerate infected vines immediately; install drip irrigation; maintain excellent field drainage.",
+        probs: [
           { name: "Tomato Late Blight", prob: 98.1 },
           { name: "Potato Late Blight", prob: 1.2 },
           { name: "Tomato Early Blight", prob: 0.5 },
@@ -963,9 +598,9 @@
           { name: "Healthy Foliage", prob: 0.0 }
         ],
         spots: [
-          {x: 160, y: 120, rx: 45, ry: 35, color: '#27272a'},
-          {x: 260, y: 170, rx: 55, ry: 40, color: '#18181b'},
-          {x: 220, y: 260, rx: 38, ry: 30, color: '#27272a'}
+          { x: 160, y: 130, rx: 45, ry: 35, color: '#27272a' },
+          { x: 260, y: 180, rx: 55, ry: 40, color: '#18181b' },
+          { x: 220, y: 250, rx: 38, ry: 30, color: '#27272a' }
         ]
       },
       potato_late_blight: {
@@ -973,13 +608,15 @@
         disease: "Potato Late Blight",
         pathogen: "Phytophthora infestans (Water Mold)",
         severity: "Critical",
-        badgeClass: "sev-critical",
-        baseConfidence: 96.3,
-        symptoms: "Water-soaked necrotic margins on leaf apex; rapid whole-plant wilting during cold, moist spells.",
+        badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+        confidence: 96.3,
+        damage: "21.5%",
+        symptoms: "Dark decaying patches on leaf apex and margins; rapid whole-canopy wilting and tuber brown rot.",
         chemical: "Spray Dimethomorph 50% WP @ 1.0 g/L or Fenamidone + Mancozeb @ 2.5 g/L.",
-        organic: "Bio-priming with Pseudomonas fluorescens (10 g/L) and certified pathogen-free seed tubers.",
-        cultural: "High ridge earthing-up to insulate developing tubers from spore wash; mandatory de-haulming before harvest.",
-        probabilities: [
+        phi: "14 Days",
+        organic: "Fermented Panchagavya spray (3%) and certified disease-free seed tuber selection.",
+        cultural: "High ridge earthing-up to prevent tuber infection from surface spores; mandatory de-haulming before harvest.",
+        probs: [
           { name: "Potato Late Blight", prob: 96.3 },
           { name: "Tomato Late Blight", prob: 2.8 },
           { name: "Tomato Early Blight", prob: 0.5 },
@@ -988,23 +625,24 @@
           { name: "Healthy Foliage", prob: 0.1 }
         ],
         spots: [
-          {x: 150, y: 160, rx: 48, ry: 36, color: '#1c1917'},
-          {x: 270, y: 220, rx: 52, ry: 42, color: '#292524'},
-          {x: 200, y: 110, rx: 30, ry: 25, color: '#1c1917'}
+          { x: 150, y: 160, rx: 48, ry: 36, color: '#1c1917' },
+          { x: 270, y: 220, rx: 52, ry: 42, color: '#292524' }
         ]
       },
       rice_bacterial_blight: {
         crop: "Rice (Oryza sativa)",
-        disease: "Bacterial Leaf Blight",
+        disease: "Rice Bacterial Leaf Blight",
         pathogen: "Xanthomonas oryzae pv. oryzae (Bacteria)",
         severity: "Moderate",
-        badgeClass: "sev-moderate",
-        baseConfidence: 95.2,
-        symptoms: "Wavy yellowish-green to straw-colored longitudinal stripes along leaf margins with bacterial ooze beads.",
+        badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        confidence: 95.2,
+        damage: "15.8%",
+        symptoms: "Longitudinal wavy yellowish-white stripes starting from leaf tips and margins with milky bacterial beads.",
         chemical: "Streptocycline foliar spray @ 0.1 g/L combined with Copper Oxychloride @ 1.5 g/L.",
-        organic: "Fresh cow dung supernatant slurry spray (20%) or botanical formulation with vitex negundo extract.",
-        cultural: "Avoid excess synthetic nitrogen fertilizers; drain flooded standing water temporarily during outbreak.",
-        probabilities: [
+        phi: "10 Days",
+        organic: "Fresh cow dung supernatant slurry spray (20%) or Pseudomonas fluorescens formulation @ 10 g/L.",
+        cultural: "Avoid excessive synthetic nitrogen; drain standing water from paddies temporarily during disease outbreaks.",
+        probs: [
           { name: "Rice Leaf Blight", prob: 95.2 },
           { name: "Corn Common Rust", prob: 2.4 },
           { name: "Tomato Early Blight", prob: 1.1 },
@@ -1013,22 +651,24 @@
           { name: "Healthy Foliage", prob: 0.2 }
         ],
         spots: [
-          {x: 130, y: 180, rx: 18, ry: 90, color: '#d97706'},
-          {x: 320, y: 160, rx: 20, ry: 80, color: '#b45309'}
+          { x: 130, y: 180, rx: 18, ry: 90, color: '#d97706' },
+          { x: 320, y: 160, rx: 20, ry: 80, color: '#b45309' }
         ]
       },
       corn_common_rust: {
         crop: "Corn / Maize (Zea mays)",
-        disease: "Common Rust",
+        disease: "Corn Common Rust",
         pathogen: "Puccinia sorghi (Fungus)",
         severity: "Moderate",
-        badgeClass: "sev-moderate",
-        baseConfidence: 94.6,
+        badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        confidence: 94.6,
+        damage: "12.4%",
         symptoms: "Golden to cinnamon-brown powdery pustules (uredinia) erupting across both adaxial and abaxial surfaces.",
         chemical: "Foliar spray with Azoxystrobin 18.2% + Difenoconazole 11.4% SC @ 1.0 mL/L.",
+        phi: "14 Days",
         organic: "Wettable Sulphur 80% WP dusting @ 2.5 g/L water.",
         cultural: "Plant certified rust-tolerant maize cultivars; execute early sowing to avoid high spore load seasons.",
-        probabilities: [
+        probs: [
           { name: "Corn Common Rust", prob: 94.6 },
           { name: "Rice Leaf Blight", prob: 2.8 },
           { name: "Tomato Early Blight", prob: 1.3 },
@@ -1037,11 +677,10 @@
           { name: "Healthy Foliage", prob: 0.2 }
         ],
         spots: [
-          {x: 200, y: 140, rx: 14, ry: 12, color: '#c2410c'},
-          {x: 230, y: 190, rx: 15, ry: 13, color: '#ea580c'},
-          {x: 260, y: 150, rx: 12, ry: 10, color: '#c2410c'},
-          {x: 170, y: 220, rx: 16, ry: 14, color: '#ea580c'},
-          {x: 290, y: 230, rx: 14, ry: 12, color: '#c2410c'}
+          { x: 200, y: 140, rx: 14, ry: 12, color: '#c2410c' },
+          { x: 240, y: 190, rx: 15, ry: 13, color: '#ea580c' },
+          { x: 260, y: 150, rx: 12, ry: 10, color: '#c2410c' },
+          { x: 170, y: 220, rx: 16, ry: 14, color: '#ea580c' }
         ]
       },
       healthy_foliage: {
@@ -1049,13 +688,15 @@
         disease: "Healthy Foliage (Pathogen Free)",
         pathogen: "None (Physiologically Normal)",
         severity: "Optimal",
-        badgeClass: "sev-healthy",
-        baseConfidence: 99.6,
+        badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+        confidence: 99.6,
+        damage: "0.0%",
         symptoms: "Lush green photosynthetic lamina, intact venation, no chlorotic discoloration or necrotic lesions.",
         chemical: "No synthetic fungicide or bactericide treatment required.",
-        organic: "Continue baseline organic nutrition using vermicompost, Jeevamrutha, and beneficial rhizosphere bio-fertilizers.",
+        phi: "N/A",
+        organic: "Continue baseline organic nutrition using vermicompost, Jeevamrutha, and beneficial microbes.",
         cultural: "Maintain regular scouting schedule and balanced N-P-K mineral fertilization.",
-        probabilities: [
+        probs: [
           { name: "Healthy Foliage", prob: 99.6 },
           { name: "Corn Common Rust", prob: 0.1 },
           { name: "Rice Leaf Blight", prob: 0.1 },
@@ -1070,80 +711,124 @@
     // State
     let currentKey = "tomato_early_blight";
     let viewMode = "original"; // 'original', 'gradcam', 'contours'
-    let customImageLoaded = false;
-    let customImgObj = null;
+    let customImg = null;
     let webcamStream = null;
 
-    const canvas = document.getElementById("previewCanvas");
+    const canvas = document.getElementById("mainCanvas");
     const ctx = canvas.getContext("2d");
 
-    window.onload = function() {
-      executeFullInference();
-    };
+    // Ambient floating botanical particles
+    const ambCanvas = document.getElementById("ambientCanvas");
+    const ambCtx = ambCanvas.getContext("2d");
+    let particles = [];
 
-    function switchInputMode(mode) {
-      document.querySelectorAll(".input-tab").forEach(tab => tab.classList.remove("active"));
-      event.target.classList.add("active");
-
-      document.getElementById("samplesBox").style.display = (mode === 'samples') ? 'block' : 'none';
-      document.getElementById("uploadBox").style.display = (mode === 'upload') ? 'block' : 'none';
-      document.getElementById("webcamBox").style.display = (mode === 'webcam') ? 'block' : 'none';
-
-      if (mode === 'webcam') {
-        startWebcam();
-      } else {
-        stopWebcam();
+    function initAmbientParticles() {
+      ambCanvas.width = window.innerWidth;
+      ambCanvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < 30; i++) {
+        particles.push({
+          x: Math.random() * ambCanvas.width,
+          y: Math.random() * ambCanvas.height,
+          radius: Math.random() * 2 + 1,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          alpha: Math.random() * 0.3 + 0.1
+        });
       }
     }
 
-    function selectSample(key, element) {
-      customImageLoaded = false;
-      customImgObj = null;
+    function renderAmbientParticles() {
+      ambCtx.clearRect(0, 0, ambCanvas.width, ambCanvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = ambCanvas.width;
+        if (p.x > ambCanvas.width) p.x = 0;
+        if (p.y < 0) p.y = ambCanvas.height;
+        if (p.y > ambCanvas.height) p.y = 0;
+
+        ambCtx.fillStyle = `rgba(16, 185, 129, ${p.alpha})`;
+        ambCtx.beginPath();
+        ambCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ambCtx.fill();
+      });
+      requestAnimationFrame(renderAmbientParticles);
+    }
+
+    window.onresize = initAmbientParticles;
+
+    window.onload = function() {
+      initAmbientParticles();
+      renderAmbientParticles();
+      triggerInference();
+    };
+
+    // View Navigation Switcher
+    function switchView(viewId) {
+      document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(`view-${viewId}`).classList.remove("hidden");
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("bg-emerald-500/10", "text-emerald-400", "border-emerald-500/30");
+        btn.classList.add("text-gray-300");
+      });
+
+      event.currentTarget.classList.add("bg-emerald-500/10", "text-emerald-400", "border-emerald-500/30");
+      event.currentTarget.classList.remove("text-gray-300");
+    }
+
+    // Input mode switch
+    function setInputMode(mode) {
+      document.getElementById("box-samples").classList.toggle("hidden", mode !== 'samples');
+      document.getElementById("box-upload").classList.toggle("hidden", mode !== 'upload');
+      document.getElementById("box-webcam").classList.toggle("hidden", mode !== 'webcam');
+
+      document.getElementById("tab-in-samples").className = (mode === 'samples') ? "flex-1 py-2 text-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition" : "flex-1 py-2 text-center rounded-lg text-gray-400 hover:text-white transition";
+      document.getElementById("tab-in-upload").className = (mode === 'upload') ? "flex-1 py-2 text-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition" : "flex-1 py-2 text-center rounded-lg text-gray-400 hover:text-white transition";
+      document.getElementById("tab-in-webcam").className = (mode === 'webcam') ? "flex-1 py-2 text-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition" : "flex-1 py-2 text-center rounded-lg text-gray-400 hover:text-white transition";
+
+      if (mode === 'webcam') startWebcam(); else stopWebcam();
+    }
+
+    function loadSample(key, elem) {
+      customImg = null;
       currentKey = key;
-
-      document.querySelectorAll(".sample-card").forEach(c => c.classList.remove("active"));
-      element.classList.add("active");
-
-      executeFullInference();
+      document.querySelectorAll(".sample-chip").forEach(c => c.className = "sample-chip text-left p-2.5 rounded-xl bg-gray-950 border border-gray-800 text-gray-300 text-xs transition hover:border-emerald-500");
+      elem.className = "sample-chip active text-left p-2.5 rounded-xl bg-gray-950 border border-emerald-500/40 text-emerald-300 text-xs transition hover:border-emerald-500";
+      triggerInference();
     }
 
     function setViewMode(mode) {
       viewMode = mode;
-      document.querySelectorAll(".view-mode-btn").forEach(btn => btn.classList.remove("active"));
-      if (mode === 'original') document.getElementById("vbtn-orig").classList.add("active");
-      if (mode === 'gradcam') document.getElementById("vbtn-cam").classList.add("active");
-      if (mode === 'contours') document.getElementById("vbtn-seg").classList.add("active");
-
-      renderCanvasScene();
+      document.getElementById("vbtn-orig").className = (mode === 'original') ? "px-2.5 py-1 rounded bg-emerald-500 text-white transition" : "px-2.5 py-1 rounded text-gray-400 hover:text-white transition";
+      document.getElementById("vbtn-cam").className = (mode === 'gradcam') ? "px-2.5 py-1 rounded bg-emerald-500 text-white transition" : "px-2.5 py-1 rounded text-gray-400 hover:text-white transition";
+      document.getElementById("vbtn-seg").className = (mode === 'contours') ? "px-2.5 py-1 rounded bg-emerald-500 text-white transition" : "px-2.5 py-1 rounded text-gray-400 hover:text-white transition";
+      renderCanvas();
     }
 
-    function handleFileSelected(e) {
+    function handleFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(evt) {
         const img = new Image();
         img.onload = function() {
-          customImageLoaded = true;
-          customImgObj = img;
-          
-          // Classify uploaded image based on color/texture heuristics or select early blight demo
+          customImg = img;
           currentKey = "tomato_early_blight";
-          executeFullInference();
+          triggerInference();
         };
         img.src = evt.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    // Webcam integration
     async function startWebcam() {
       try {
         webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
         document.getElementById("webcamVideo").srcObject = webcamStream;
       } catch (err) {
-        alert("Webcam access declined or not supported. You can still use the sample palette or file upload.");
+        alert("Webcam access not granted or not supported on this device.");
       }
     }
 
@@ -1154,74 +839,65 @@
       }
     }
 
-    function captureWebcamFrame() {
+    function snapWebcam() {
       const video = document.getElementById("webcamVideo");
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = 480;
-      tempCanvas.height = 360;
-      const tCtx = tempCanvas.getContext("2d");
-      tCtx.drawImage(video, 0, 0, 480, 360);
-
-      const capturedImg = new Image();
-      capturedImg.onload = function() {
-        customImageLoaded = true;
-        customImgObj = capturedImg;
+      const tmp = document.createElement("canvas");
+      tmp.width = 480; tmp.height = 360;
+      const tctx = tmp.getContext("2d");
+      tctx.drawImage(video, 0, 0, 480, 360);
+      const img = new Image();
+      img.onload = function() {
+        customImg = img;
         currentKey = "tomato_early_blight";
         stopWebcam();
-        document.getElementById("webcamBox").style.display = 'none';
-        document.getElementById("samplesBox").style.display = 'block';
-        document.querySelectorAll(".input-tab")[0].classList.add("active");
-        document.querySelectorAll(".input-tab")[2].classList.remove("active");
-        executeFullInference();
+        setInputMode('samples');
+        triggerInference();
       };
-      capturedImg.src = tempCanvas.toDataURL("image/jpeg");
+      img.src = tmp.toDataURL("image/jpeg");
     }
 
-    // Render Canvas Scene
-    function renderCanvasScene() {
+    function renderCanvas() {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
 
-      if (customImageLoaded && customImgObj) {
-        // Draw user uploaded or webcam photo
-        ctx.drawImage(customImgObj, 0, 0, w, h);
+      if (customImg) {
+        ctx.drawImage(customImg, 0, 0, w, h);
       } else {
-        // Draw photorealistic synthetic leaf for the selected sample
-        drawSyntheticLeaf(w, h);
+        drawRealisticLeaf(w, h);
       }
 
-      const info = KNOWLEDGE_BASE[currentKey];
+      const data = KB[currentKey];
 
       // Draw Grad-CAM Attention Heatmap
-      if (viewMode === 'gradcam' && info.spots.length > 0) {
-        info.spots.forEach(sp => {
+      if (viewMode === 'gradcam' && data.spots.length > 0) {
+        data.spots.forEach(sp => {
           const maxR = Math.max(sp.rx, sp.ry) * 2.8;
-          const radGrad = ctx.createRadialGradient(sp.x, sp.y, 4, sp.x, sp.y, maxR);
-          radGrad.addColorStop(0, "rgba(239, 68, 68, 0.88)");    // Hot red
-          radGrad.addColorStop(0.35, "rgba(245, 158, 11, 0.78)"); // Amber
-          radGrad.addColorStop(0.7, "rgba(59, 130, 246, 0.45)");  // Blue
-          radGrad.addColorStop(1, "rgba(0, 0, 0, 0)");            // Transparent
+          const rad = ctx.createRadialGradient(sp.x, sp.y, 4, sp.x, sp.y, maxR);
+          rad.addColorStop(0, "rgba(239, 68, 68, 0.88)");    // Hot red focus
+          rad.addColorStop(0.35, "rgba(245, 158, 11, 0.78)"); // Amber
+          rad.addColorStop(0.7, "rgba(59, 130, 246, 0.45)");  // Blue
+          rad.addColorStop(1, "rgba(0, 0, 0, 0)");
 
-          ctx.fillStyle = radGrad;
+          ctx.fillStyle = rad;
           ctx.beginPath();
           ctx.ellipse(sp.x, sp.y, maxR, maxR * 0.9, 0, 0, Math.PI * 2);
           ctx.fill();
         });
 
-        // Heatmap Badge
-        ctx.fillStyle = "rgba(15, 23, 42, 0.8)";
+        // Heatmap Legend
+        ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
         ctx.fillRect(12, 12, 195, 26);
         ctx.fillStyle = "#ef4444";
         ctx.fillRect(18, 20, 10, 10);
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 11px sans-serif";
-        ctx.fillText("Grad-CAM: High Attention Lesion", 36, 29);
+        ctx.fillText("Grad-CAM: Lesion Attention", 36, 29);
       }
 
       // Draw Lesion Contours / Bounding Boxes
-      if (viewMode === 'contours' && info.spots.length > 0) {
-        info.spots.forEach((sp, idx) => {
+      if (viewMode === 'contours' && data.spots.length > 0) {
+        data.spots.forEach((sp, idx) => {
           ctx.strokeStyle = "#38bdf8";
           ctx.lineWidth = 2;
           ctx.setLineDash([4, 2]);
@@ -1237,36 +913,35 @@
       }
     }
 
-    function drawSyntheticLeaf(w, h) {
-      // Dark neutral background
-      ctx.fillStyle = "#0f172a";
+    function drawRealisticLeaf(w, h) {
+      ctx.fillStyle = "#090d16";
       ctx.fillRect(0, 0, w, h);
 
-      // Base leaf shape
       ctx.save();
       ctx.translate(w / 2, h / 2);
 
+      // Leaf Blade Outline
       ctx.beginPath();
       ctx.moveTo(0, -140);
       ctx.bezierCurveTo(120, -90, 140, 50, 0, 140);
       ctx.bezierCurveTo(-140, 50, -120, -90, 0, -140);
-      
-      const leafGrad = ctx.createLinearGradient(0, -140, 0, 140);
+
+      const grad = ctx.createLinearGradient(0, -140, 0, 140);
       if (currentKey === 'healthy_foliage') {
-        leafGrad.addColorStop(0, "#22c55e");
-        leafGrad.addColorStop(1, "#15803d");
+        grad.addColorStop(0, "#22c55e");
+        grad.addColorStop(1, "#15803d");
       } else {
-        leafGrad.addColorStop(0, "#4ade80");
-        leafGrad.addColorStop(0.6, "#22c55e");
-        leafGrad.addColorStop(1, "#166534");
+        grad.addColorStop(0, "#4ade80");
+        grad.addColorStop(0.6, "#22c55e");
+        grad.addColorStop(1, "#166534");
       }
-      ctx.fillStyle = leafGrad;
+      ctx.fillStyle = grad;
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#14532d";
       ctx.stroke();
 
-      // Main vein
+      // Main Vein
       ctx.beginPath();
       ctx.moveTo(0, -140);
       ctx.lineTo(0, 140);
@@ -1274,7 +949,7 @@
       ctx.lineWidth = 3.5;
       ctx.stroke();
 
-      // Lateral veins
+      // Lateral Veins
       for (let y = -90; y <= 90; y += 35) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -1288,15 +963,14 @@
 
       ctx.restore();
 
-      // Draw characteristic spots for the disease
-      const info = KNOWLEDGE_BASE[currentKey];
-      info.spots.forEach(sp => {
+      // Draw characteristic spots
+      const data = KB[currentKey];
+      data.spots.forEach(sp => {
         ctx.fillStyle = sp.color;
         ctx.beginPath();
         ctx.ellipse(sp.x, sp.y, sp.rx, sp.ry, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Chlorotic yellow halo around early blight
         if (currentKey === 'tomato_early_blight') {
           ctx.beginPath();
           ctx.ellipse(sp.x, sp.y, sp.rx * 1.3, sp.ry * 1.3, 0, 0, Math.PI * 2);
@@ -1304,7 +978,6 @@
           ctx.lineWidth = 3;
           ctx.stroke();
 
-          // Target rings
           ctx.beginPath();
           ctx.ellipse(sp.x, sp.y, sp.rx * 0.5, sp.ry * 0.5, 0, 0, Math.PI * 2);
           ctx.strokeStyle = "#180a0a";
@@ -1314,90 +987,142 @@
       });
     }
 
-    // Execute Inference Pipeline
-    function executeFullInference() {
-      renderCanvasScene();
+    function triggerInference() {
+      renderCanvas();
+      const d = KB[currentKey];
+      const randomLatency = (10.5 + Math.random() * 4.0).toFixed(1);
 
-      const data = KNOWLEDGE_BASE[currentKey];
-      const randomLatency = (10.5 + Math.random() * 4.5).toFixed(1);
-      document.getElementById("latencyLabel").innerText = `Inference: ${randomLatency} ms (MobileNetV2)`;
+      document.getElementById("statLatency").innerText = randomLatency + " ms";
+      document.getElementById("diagTitle").innerText = d.disease;
+      document.getElementById("diagPathogen").innerText = `${d.crop} · ${d.pathogen}`;
+      document.getElementById("diagConfidence").innerText = d.confidence + "%";
+      document.getElementById("diagDamage").innerText = d.damage;
+      document.getElementById("diagSymptoms").innerText = d.symptoms;
 
-      // Calculate simulated leaf damage percentage
-      let affectedPct = (currentKey === 'healthy_foliage') ? 0.0 : (12 + Math.random() * 15).toFixed(1);
+      const badge = document.getElementById("diagBadge");
+      badge.className = `text-xs font-extrabold px-3 py-1 rounded-full border ${d.badgeColor}`;
+      badge.innerText = d.severity;
 
-      // Render Diagnostic Card
-      const diagHtml = `
-        <div class="diagnosis-card">
-          <div class="diag-top">
-            <div>
-              <div class="disease-title">${data.disease}</div>
-              <div class="pathogen-name">${data.crop} · ${data.pathogen}</div>
-            </div>
-            <span class="severity-badge ${data.badgeClass}">${data.severity}</span>
+      // Softmax Distribution HTML
+      const barsHtml = d.probs.map(p => `
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-gray-300 font-semibold">
+            <span>${p.name}</span>
+            <span>${p.prob}%</span>
           </div>
-
-          <div class="damage-metrics">
-            <div class="metric-box">
-              <div class="metric-label">Model Confidence</div>
-              <div class="metric-value" style="color: var(--primary);">${data.baseConfidence}%</div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Affected Leaf Area</div>
-              <div class="metric-value" style="color: ${affectedPct > 0 ? '#dc2626' : '#16a34a'};">${affectedPct}%</div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Attention Status</div>
-              <div class="metric-value" style="font-size: 0.95rem; margin-top: 5px;">Lesion Focused</div>
-            </div>
-          </div>
-
-          <div style="font-size: 0.84rem; color: #475569; margin-bottom: 16px;">
-            <strong>Pathological Indicator:</strong> ${data.symptoms}
-          </div>
-
-          <!-- Softmax Probabilities Bar Chart -->
-          <div class="prob-distribution">
-            <div class="prob-title">
-              <span>Softmax Probability Distribution</span>
-              <span>Top 6 Classes</span>
-            </div>
-            ${data.probabilities.map(p => `
-              <div class="prob-row">
-                <div class="prob-label">${p.name}</div>
-                <div class="prob-bar-track">
-                  <div class="prob-bar-fill" style="width: ${p.prob}%;"></div>
-                </div>
-                <div class="prob-pct">${p.prob}%</div>
-              </div>
-            `).join('')}
+          <div class="w-full h-1.5 bg-gray-950 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style="width: ${p.prob}%;"></div>
           </div>
         </div>
+      `).join('');
+      document.getElementById("probBarsContainer").innerHTML = barsHtml;
+
+      // Update Remediation
+      document.getElementById("rxChemText").innerText = d.chemical;
+      document.getElementById("rxPhiText").innerText = d.phi;
+      document.getElementById("rxOrgText").innerText = d.organic;
+      document.getElementById("rxCultText").innerText = d.cultural;
+    }
+
+    function switchRxTab(tab) {
+      document.querySelectorAll(".rx-content").forEach(c => c.classList.add("hidden"));
+      document.getElementById(`rx-${tab}`).classList.remove("hidden");
+
+      document.getElementById("rxtab-chem").className = (tab === 'chemical') ? "flex-1 py-1.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 transition" : "flex-1 py-1.5 rounded text-gray-400 hover:text-white transition";
+      document.getElementById("rxtab-org").className = (tab === 'organic') ? "flex-1 py-1.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition" : "flex-1 py-1.5 rounded text-gray-400 hover:text-white transition";
+      document.getElementById("rxtab-cult").className = (tab === 'cultural') ? "flex-1 py-1.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 transition" : "flex-1 py-1.5 rounded text-gray-400 hover:text-white transition";
+    }
+
+    // AgriBot AI Chatbot Logic
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage("user", text);
+      input.value = "";
+
+      setTimeout(() => {
+        const reply = generateBotResponse(text);
+        appendChatMessage("ai", reply);
+      }, 350);
+    }
+
+    function sendQuickPrompt(prompt) {
+      appendChatMessage("user", prompt);
+      setTimeout(() => {
+        const reply = generateBotResponse(prompt);
+        appendChatMessage("ai", reply);
+      }, 350);
+    }
+
+    function appendChatMessage(sender, text) {
+      const container = document.getElementById("chatMessages");
+      const isUser = sender === "user";
+      const html = `
+        <div class="flex gap-3 ${isUser ? 'justify-end' : ''}">
+          ${!isUser ? '<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold flex-shrink-0">AI</div>' : ''}
+          <div class="${isUser ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-gray-800/80 border border-gray-700/60 text-gray-200 rounded-tl-sm'} p-3.5 rounded-2xl max-w-[85%] leading-relaxed">
+            ${text}
+          </div>
+          ${isUser ? '<div class="w-7 h-7 rounded-lg bg-gray-700 text-gray-300 flex items-center justify-center font-bold flex-shrink-0">You</div>' : ''}
+        </div>
       `;
-
-      document.getElementById("diagnosticResultsArea").innerHTML = diagHtml;
-
-      // Update Remediation Content
-      document.getElementById("rxChemicalText").innerText = data.chemical;
-      document.getElementById("rxOrganicText").innerText = data.organic;
-      document.getElementById("rxCulturalText").innerText = data.cultural;
+      container.innerHTML += html;
+      container.scrollTop = container.scrollHeight;
     }
 
-    function switchTreatmentTab(evt, paneId) {
-      document.querySelectorAll(".treatment-tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-
-      evt.target.classList.add("active");
-      document.getElementById(paneId).classList.add("active");
-    }
-
-    function openArchModal() {
-      document.getElementById("archModal").style.display = 'flex';
-    }
-
-    function closeArchModal(e) {
-      if (!e || e.target.id === 'archModal') {
-        document.getElementById("archModal").style.display = 'none';
+    function generateBotResponse(q) {
+      const ql = q.toLowerCase();
+      if (ql.includes("bordeaux") || ql.includes("late blight")) {
+        return "<strong>1% Bordeaux Mixture Protocol:</strong><br>1. Dissolve 1 kg Copper Sulphate in 50 L of water in a plastic drum.<br>2. Slake 1 kg Quicklime in 50 L of water in another container.<br>3. Pour copper sulphate into the lime solution while stirring vigorously.<br>4. Spray immediately to prevent blight sporangia germination.";
       }
+      if (ql.includes("mancozeb") || ql.includes("early blight")) {
+        return "For <strong>Tomato Early Blight (Alternaria solani)</strong>, apply Mancozeb 75% WP @ <strong>2.5 grams per liter of water</strong>. Spray when initial concentric rings appear on lower foliage. Pre-Harvest Interval (PHI) is 7 days.";
+      }
+      if (ql.includes("mobilenet") || ql.includes("vgg") || ql.includes("architecture")) {
+        return "<strong>Why MobileNetV2 over VGG-16?</strong><br>• <strong>Parameter Count:</strong> 3.5 Million vs 138 Million for VGG-16.<br>• <strong>Memory Footprint:</strong> 14.1 MB vs 528 MB.<br>• <strong>Inference Latency:</strong> 12.4 ms vs 118 ms.<br>MobileNetV2 uses depthwise separable convolutions which yield an 8.8x compute reduction, making it ideal for rural farmer smartphones.";
+      }
+      if (ql.includes("neem") || ql.includes("organic")) {
+        return "<strong>Organic Bio-Fungicide Recipe:</strong><br>Mix 5 mL cold-pressed Neem Oil (10,000 ppm) per liter of water with 1 mL mild liquid soap as an emulsifier. Spray bi-weekly to prevent fungal spore settlement without pesticide residue.";
+      }
+      return "Based on agronomic pathology guidelines: Ensure proper canopy aeration, avoid overhead sprinkler watering, and spray contact protective fungicides or bio-fungicides (Trichoderma viride) at the earliest sign of foliar lesions.";
+    }
+
+    // Dosage Calculator Logic
+    function calculateFieldDosage() {
+      const disease = document.getElementById("calcDisease").value;
+      const area = parseFloat(document.getElementById("calcArea").value) || 1.0;
+      const unit = document.getElementById("calcUnit").value;
+
+      // Normalize to acres
+      let acres = area;
+      if (unit === 'hectare') acres = area * 2.471;
+      if (unit === 'sqm') acres = area * 0.025; // guntas approx
+
+      const waterLiters = Math.round(acres * 200); // 200 L per acre typical
+      let chemText = "";
+
+      if (disease === 'early_blight') {
+        const grams = waterLiters * 2.5;
+        chemText = `${(grams / 1000).toFixed(2)} kg of Mancozeb 75% WP`;
+      } else if (disease === 'late_blight') {
+        const grams = waterLiters * 2.0;
+        chemText = `${(grams / 1000).toFixed(2)} kg of Metalaxyl + Mancozeb (Ridomil)`;
+      } else if (disease === 'rice_blight') {
+        const grams = waterLiters * 0.1;
+        chemText = `${grams.toFixed(1)} grams of Streptocycline + ${(waterLiters * 1.5 / 1000).toFixed(2)} kg Copper Oxychloride`;
+      } else if (disease === 'corn_rust') {
+        const ml = waterLiters * 1.0;
+        chemText = `${(ml / 1000).toFixed(2)} Liters of Azoxystrobin + Difenoconazole SC`;
+      } else {
+        const ml = waterLiters * 5.0;
+        chemText = `${(ml / 1000).toFixed(2)} Liters of Pure Cold-Pressed Neem Oil`;
+      }
+
+      document.getElementById("calcWater").innerHTML = `Required Spray Water: <strong>${waterLiters} Liters</strong> (${(waterLiters / 16).toFixed(0)} Knapsack Tanks of 16L)`;
+      document.getElementById("calcChemical").innerHTML = `Active Chemical Formulation: <strong>${chemText}</strong>`;
     }
   </script>
 </body>
